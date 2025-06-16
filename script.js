@@ -1,5 +1,4 @@
 // Portfolio JavaScript for Interactivity and Animations
-
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all functionality
     initScrollAnimations();
@@ -81,7 +80,7 @@ function initNavigation() {
 
             // Close mobile menu if open
             const navbarCollapse = document.querySelector('.navbar-collapse');
-            if (navbarCollapse.classList.contains('show')) {
+            if (navbarCollapse && navbarCollapse.classList.contains('show')) {
                 navbarCollapse.classList.remove('show');
             }
         });
@@ -226,6 +225,13 @@ function submitForm(form) {
 
 function showSuccessMessage(message) {
     const form = document.getElementById('contactForm');
+    const existingAlert = form.parentNode.querySelector('.alert-success');
+    
+    // Remove existing alert if present
+    if (existingAlert) {
+        existingAlert.remove();
+    }
+    
     const successDiv = document.createElement('div');
     successDiv.className = 'alert alert-success';
     successDiv.textContent = message;
@@ -352,35 +358,3 @@ document.addEventListener('click', (e) => {
         }, 150);
     }
 });
-
-// Easter egg: Konami code
-let konamiCodeSequence = [];
-const konamiPattern = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // Up Up Down Down Left Right Left Right B A
-
-document.addEventListener('keydown', (e) => {
-    konamiCodeSequence.push(e.keyCode);
-    
-    if (konamiCodeSequence.length > konamiPattern.length) {
-        konamiCodeSequence.shift();
-    }
-    
-    if (konamiCodeSequence.join(',') === konamiPattern.join(',')) {
-        // Trigger special animation
-        document.body.style.animation = 'rainbow 2s infinite';
-        setTimeout(() => {
-            document.body.style.animation = '';
-        }, 5000);
-        
-        console.log('🎉 Konami code activated! You found the easter egg!');
-    }
-});
-
-// Add rainbow animation for easter egg
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes rainbow {
-        0% { filter: hue-rotate(0deg); }
-        100% { filter: hue-rotate(360deg); }
-    }
-`;
-document.head.appendChild(style);

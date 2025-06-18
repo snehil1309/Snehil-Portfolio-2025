@@ -277,49 +277,37 @@ function initTypingEffect() {
   let textIndex = 0;
   let charIndex = 0;
   let isDeleting = false;
-  let lastFrameTime = performance.now();
-  let animationFrameId = null;
+  let timeoutId = null;
 
-  function type(currentTime) {
+  function type() {
+    if (timeoutId) clearTimeout(timeoutId); // Clear any existing timeout
+
     const currentText = texts[textIndex];
-    const deltaTime = currentTime - lastFrameTime;
+    typingElement.textContent = currentText.substring(0, charIndex);
 
-    if (deltaTime >= (isDeleting ? 50 : 100)) {
-      lastFrameTime = currentTime;
-
-      if (isDeleting) {
-        typingElement.textContent = currentText.substring(0, charIndex - 1);
-        charIndex--;
-      } else {
-        typingElement.textContent = currentText.substring(0, charIndex + 1);
-        charIndex++;
+    if (!isDeleting) {
+      charIndex++;
+      timeoutId = setTimeout(type, 100); // Faster typing speed (100ms)
+      if (charIndex > currentText.length) {
+        isDeleting = true;
+        timeoutId = setTimeout(type, 3000); // Longer hold time (3 seconds)
       }
-
-      if (!isDeleting && charIndex === currentText.length) {
-        setTimeout(() => {
-          isDeleting = true;
-          animationFrameId = requestAnimationFrame(type);
-        }, 2000);
-        return;
-      } else if (isDeleting && charIndex === 0) {
+    } else {
+      charIndex--;
+      timeoutId = setTimeout(type, 50); // Deleting speed (unchanged)
+      if (charIndex === 0) {
         isDeleting = false;
-        textIndex = (textIndex + 1) % texts.length;
+        textIndex = (textIndex + 1) % texts.length; // Move to next text
       }
     }
-
-    animationFrameId = requestAnimationFrame(type);
   }
 
-  // Start animation
-  setTimeout(() => {
-    animationFrameId = requestAnimationFrame(type);
-  }, 1000);
+  // Start animation after a delay
+  timeoutId = setTimeout(type, 1000);
 
-  // Cleanup function to stop animation if needed
+  // Cleanup on page unload
   window.addEventListener("unload", () => {
-    if (animationFrameId) {
-      cancelAnimationFrame(animationFrameId);
-    }
+    if (timeoutId) clearTimeout(timeoutId);
   });
 }
 
@@ -394,3 +382,73 @@ document.addEventListener("click", (e) => {
     }, 150);
   }
 });
+
+function initMusicPlayer() {
+  const audio = document.getElementById("backgroundMusic");
+  const toggleBtn = document.getElementById("musicToggle");
+  const startBtn = document.getElementById("musicStartBtn");
+  const toggleIcon = toggleBtn.querySelector("i");
+  // const startIcon = startBtn.querySelector("i");
+
+  if (!audio || !toggleBtn || !startBtn) {
+    console.warn("Audio, toggle button, or start button not found");
+    return;
+  }
+
+  // Function to sync button states
+  function syncButtonStates(isPlaying) {
+    if (isPlaying) {
+      toggleIcon.classList.remove("fa-volume-mute");
+      toggleIcon.classList.add("fa-volume-up");
+      // startIcon.classList.remove("fa-volume-mute");
+      // startIcon.classList.add("fa-volume-up");
+      toggleBtn.setAttribute("aria-label", "Pause background music");
+      startBtn.setAttribute("aria-label", "Pause background music");
+    } else {
+      toggleIcon.classList.remove("fa-volume-up");
+      toggleIcon.classList.add("fa-volume-mute");
+      // startIcon.classList.remove("fa-volume-up");
+      // startIcon.classList.add("fa-volume-mute");
+      toggleBtn.setAttribute("aria-label", "Play background music");
+      startBtn.setAttribute("aria-label", "Play background music");
+    }
+  }
+
+  // Toggle music on start button click
+  startBtn.addEventListener("click", () => {
+    if (audio.paused) {
+      audio
+        .play()
+        .then(() => {
+          syncButtonStates(true);
+        })
+        .catch((error) => console.error("Playback failed:", error));
+    } else {
+      audio.pause();
+      syncButtonStates(false);
+    }
+  });
+
+  // Toggle music on toggle button click
+  toggleBtn.addEventListener("click", () => {
+    if (audio.paused) {
+      audio
+        .play()
+        .then(() => {
+          syncButtonStates(true);
+        })
+        .catch((error) => console.error("Playback failed:", error));
+    } else {
+      audio.pause();
+      syncButtonStates(false);
+    }
+  });
+
+  // Cleanup on page unload
+  window.addEventListener("unload", () => {
+    audio.pause();
+  });
+}
+
+// Initialize music player on DOM load
+document.addEventListener("DOMContentLoaded", initMusicPlayer);

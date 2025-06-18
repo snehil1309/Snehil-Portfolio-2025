@@ -94,11 +94,15 @@
               applications using Angular, HTML, CSS, JavaScript, and Bootstrap.
             </p>
             <div class="hero-buttons fade-in-up">
-              <a href="#contact" class="btn btn-primary btn-lg me-3"
-                >Get In Touch</a
-              >
-              <a href="#about" class="btn btn-outline-light btn-lg"
-                >Learn More</a
+              <a id="musicStartBtn" class="btn btn-primary btn-lg"
+                >Fancy Some Music <i class="fas fa-music"></i
+              ></a>
+
+              <a
+                href="./attached_assets/Snehil-Pallav-Sinha-2025_1750073027943.pdf"
+                class="btn btn-outline-light btn-lg"
+                download
+                >Download My Resume</a
               >
             </div>
           </div>
@@ -484,7 +488,21 @@
         <p>&copy; 2025 Snehil Pallav Sinha. All rights reserved.</p>
       </div>
     </footer>
+    <!-- Audio Player -->
+    <audio id="backgroundMusic" loop>
+      <source
+        src="./attached_assets/blue-house-boogie-110806.mp3"
+        type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
 
+    <!-- Music Control Button -->
+    <button
+      id="musicToggle"
+      class="music-toggle-btn"
+      aria-label="Toggle background music">
+      <i class="fas fa-volume-up"></i>
+    </button>
     <!-- Bootstrap 5.2.3 JS -->
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"

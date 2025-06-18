@@ -40,7 +40,7 @@ function initScrollAnimations() {
 
   // Observe individual elements
   const animateElements = document.querySelectorAll(
-    ".experience-card, .skill-item, .contact-item, .tech-icon"
+    ".experience-card, .skill-item, .contact-item, .tech-icon, .project-card"
   );
   animateElements.forEach((element) => {
     element.classList.add("animate-on-scroll");
